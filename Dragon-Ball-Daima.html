@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagi Plus • Dragon Ball Daima</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            scroll-behavior: smooth;
+            background: url('https://media.themoviedb.org/t/p/w780/oUmWLyeko3kYdUr8DBLIsxwcugl.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1;
+        }
+        .header {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+        .details h1 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .buttons {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-lang, .btn-download {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 0; /* Bordes puntiagudos */
+        }
+        .btn-download {
+            background-color: #FFD700;
+            color: black;
+        }
+        .season-list, .episode-list {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .season-item, .episode-item {
+            background-color: #444;
+            padding: 15px 20px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 0; /* Bordes puntiagudos */
+            width: 100%;
+            flex-basis: 100px;
+            box-sizing: border-box;
+            font-size: 16px;
+            position: relative; /* Para la posición de la etiqueta */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .episode-item.selected, .season-item.selected {
+            background-color: white; /* Cambia a blanco al ser seleccionado */
+            color: black;
+        }
+        .episode-item::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 5px; /* Ajusta la posición vertical */
+            right: 5px; /* Ajusta la posición horizontal */
+            font-size: 8px;
+            color: white;
+            background-color: #34568B;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: wave 1.5s infinite;
+            z-index: 3;
+        }
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+        .play-button:active {
+            transform: scale(0.9);
+        }
+        @keyframes wave {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #FFD700; /* Color dorado */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="header" id="videoSection">
+        <iframe id="videoPlayer" src=""></iframe>
+        <button class="play-button" id="playButton">
+            <i class="fas fa-play"></i>
+        </button>
+    </div>
+    <div class="content">
+        <div class="details">
+            <h1>Dragon Ball Daima</h1>
+            <p><h4>Publicado: 2024 | 
+Animación, Action & Adventure, Comedia, Sci-Fi & Fantasy.</h4></p>
+            <p>Sinopsis: Misteriosamente transformados en mini versiones de sí mismos, Goku y sus amigos viajan al Reino de los Demonios para descubrir la verdad y encontrar una cura.</p>
+            <div class="buttons">
+                <button class="btn-lang" onclick="toggleFullscreen()">Pantalla Completa</button>
+                <button class="btn-download" id="downloadBtn">Descargar</button>
+            </div>
+            <div class="seasons">
+                <h3>Temporadas</h3>
+                <div class="season-list">
+                    <div class="season-item" data-season="1">Temporada 1</div>
+                </div>
+            </div>
+            <div class="episodes" id="episodesSection" style="display: none;">
+                <h3>Capítulos</h3>
+                <div class="episode-list"></div>
+            </div>
+        </div>
+        <div class="note">
+            CUALQUIER ERROR QUE SE PRESENTE COMUNICARLO EN EL GRUPO DE TELEGRAM, EL GRUPO SE ENCUENTRA EN AJUSTES
+        </div>
+    </div>
+
+    <!-• Modal para las opciones de descarga -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Selecciona una opción de descarga:</h2>
+            <div class="download-option" onclick="window.location.href='https://example.com/download1';">Opción de descarga 1</div>
+            
+        </div>
+    </div>
+
+    <script>
+        const seasonItems = document.querySelectorAll('.season-item');
+        const episodeList = document.querySelector('.episode-list');
+        const episodesSection = document.getElementById('episodesSection');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const downloadButton = document.getElementById('downloadBtn');
+        const playButton = document.getElementById('playButton');
+
+        const capítulos = [
+            { 
+                temporada: 1, 
+                episodios: Array.from({ length: 10 }, (_, i) => Episodio ${i + 1}) // Solo 10 episodios de ejemplo
+            }
+        ];
+
+        const urlsVisualización = {
+            1: [
+                "https://example.com/ep1",
+                "https://example.com/ep2",
+                "https://example.com/ep3",
+                "https://example.com/ep4",
+                "https://example.com/ep5",
+                "https://example.com/ep6",
+                "https://example.com/ep7",
+                "https://example.com/ep8",
+                "https://example.com/ep9",
+                "https://example.com/ep10"
+            ]
+        };
+
+        let selectedSeason = null;
+
+        seasonItems.forEach(item => {
+            item.addEventListener('click', () => {
+                selectedSeason = parseInt(item.dataset.season);
+                episodeList.innerHTML = '';
+                const episodiosTemporada = capítulos.find(cap => cap.temporada === selectedSeason);
+                if (episodiosTemporada) {
+                    episodiosTemporada.episodios.forEach((episodio, index) => {
+                        const episodeItem = document.createElement('div');
+                        episodeItem.classList.add('episode-item');
+                        episodeItem.textContent = episodio;
+
+                        // Determina la etiqueta "SUB" o "ES" según la lógica
+                        const label = (selectedSeason === 1 && index < 2) ? 'ES' : 'SUB';
+                        episodeItem.setAttribute('data-label', label);
+
+                        episodeItem.addEventListener('click', () => {
+                            const urlVisualización = urlsVisualización[selectedSeason][index];
+                            videoPlayer.src = urlVisualización;
+                            videoPlayer.style.display = 'block'; // Mostrar el iframe
+
+                            // Desplazar hacia el video
+                            window.scrollTo({
+                                top: document.getElementById("videoSection").offsetTop,
+                                behavior: 'smooth'
+                            });
+
+                            // Cambiar color al seleccionar el capítulo
+                            document.querySelectorAll('.episode-item').forEach(el => el.classList.remove('selected'));
+                            episodeItem.classList.add('selected'); // Cambia el color al seleccionar
+                        });
+                        episodeList.appendChild(episodeItem);
+                    });
+                    episodesSection.style.display = 'block';
+                    document.querySelectorAll('.season-item').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+                } else {
+                    episodesSection.style.display = 'none';
+                }
+            });
+        });
+
+        playButton.addEventListener('click', () => {
+            if (selectedSeason !== null) {
+                const firstEpisodeItem = episodeList.firstChild;
+                if (firstEpisodeItem) {
+                    firstEpisodeItem.click(); // Simula el clic en el primer episodio
+                }
+            }
+            videoPlayer.style.display = 'block'; // Muestra el iframe
+            playButton.style.display = 'none'; // Oculta el botón de play
+        });
+
+        // Modal para opciones de descarga
+        const modal = document.getElementById("myModal");
+        const closeModal = document.getElementsByClassName("close")[0];
+
+        downloadButton.onclick = function() {
+            modal.style.display = "block"; // Muestra el modal
+        }
+
+        closeModal.onclick = function() {
+            modal.style.display = "none"; // Esconde el modal
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none"; // Esconde el modal si se hace clic fuera
+            }
+        }
+
+        function toggleFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                videoSection.requestFullscreen();
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>
