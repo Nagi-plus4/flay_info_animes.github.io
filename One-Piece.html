@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nagi Plus • One Piece</title>
+    <title>Streaming App • Demon Slayer</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             color: white;
             scroll-behavior: smooth;
-            background: url('https://media.themoviedb.org/t/p/w780/4Mt7WHox67uJ1yErwTBFcV8KWgG.jpg') no-repeat center center fixed;
+            position: relative; /* Necesario para el overlay */
+        }
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.themoviedb.org/t/p/w780/4Mt7WHox67uJ1yErwTBFcV8KWgG.jpg'); /* Imagen de fondo */
             background-size: cover;
+            background-position: center;
+            z-index: 0; /* Detrás de todo */
         }
         .overlay {
             position: fixed;
@@ -19,28 +29,23 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.7); /* Opacidad del fondo */
+            z-index: 1; /* Sobre la imagen de fondo */
         }
         .header {
             height: 300px;
-            display: flex;
-            align-items: center;
+            z-index: 2; /* Por encima del overlay */
             position: relative;
-            z-index: 2;
         }
         iframe {
             width: 100%;
             height: 100%;
             border: none;
-            display: none;
         }
         .content {
             padding: 20px;
-            display: flex;
-            flex-direction: column;
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Por encima del overlay */
         }
         .details h1 {
             font-size: 24px;
@@ -54,17 +59,22 @@
             display: flex;
             gap: 10px;
         }
-        .btn-lang, .btn-download {
+        .btn-lang, .btn-episode, .btn-download {
             background-color: #333;
             color: white;
             border: none;
             padding: 10px 20px;
             cursor: pointer;
-            border-radius: 0; /* Bordes puntiagudos */
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         .btn-download {
-            background-color: #FFD700;
-            color: black;
+            background-color: #FFD700; /* Dorado */
+            color: black; /* Texto negro */
+        }
+        .btn-lang:active, .btn-episode:active, .btn-download:active {
+            background-color: white; /* Cambia a blanco al presionar */
+            color: black; /* Texto negro */
         }
         .season-list, .episode-list {
             display: flex;
@@ -74,104 +84,72 @@
         }
         .season-item, .episode-item {
             background-color: #444;
-            padding: 15px 20px;
+            padding: 10px;
             cursor: pointer;
             text-align: center;
-            border-radius: 0; /* Bordes puntiagudos */
-            width: 100%;
-            flex-basis: 100px;
-            box-sizing: border-box;
-            font-size: 16px;
-            position: relative; /* Para la posición de la etiqueta */
+            width: 100px;
+            position: relative;
             transition: background-color 0.3s, color 0.3s;
         }
         .episode-item.selected, .season-item.selected {
-            background-color: white;
+            background-color: #FFD700; /* Dorado */
             color: black;
+        }
+        .episodes {
+            display: none;
         }
         .episode-item::before {
             content: attr(data-label);
             position: absolute;
-            top: 5px; /* Ajusta la posición vertical */
-            right: 5px; /* Ajusta la posición horizontal */
+            top: 5px;
+            right: 5px;
             font-size: 8px;
             color: white;
             background-color: #34568B;
             padding: 2px 4px;
             border-radius: 3px;
         }
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            color: #333;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: transform 0.3s;
-            animation: wave 1.5s infinite;
-            z-index: 3;
+        .btn-lang {
+            background: linear-gradient(to right, #00FF00, #FF0000, #FF69B4, #FFFFE0);
+            border-radius: 10px;
+            color: #000;
+            text-shadow: 1px 1px 2px #000;
+            transition: background-position 0.5s ease-in-out;
         }
-        .play-button:hover {
-            transform: scale(1.1);
-        }
-        .play-button:active {
-            transform: scale(0.9);
-        }
-        @keyframes wave {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.05);
-            }
-        }
-        .note {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #FFD700; /* Color dorado */
+        .btn-lang:hover {
+            background-position: 100% 0;
         }
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
+    <div class="background"></div> <!-• Imagen de fondo -->
+    <div class="overlay"></div> <!-• Capa de opacidad -->
     <div class="header" id="videoSection">
-        <iframe id="videoPlayer" src=""></iframe>
-        <button class="play-button" id="playButton">
-            <i class="fas fa-play"></i>
-        </button>
+        <iframe id="videoPlayer" src=""></iframe> <!-• URL inicial -->
     </div>
     <div class="content">
         <div class="details">
             <h1>One Piece</h1>
-            <p>Publicado: 1999 | Acción | Aventura | Fantasía</p>
-            <p>Sinopsis: Riqueza, fama, poder... un hombre había obtenido todo en este mundo, era el Rey de los Piratas Gold Roger. Antes de morir, sus últimas palabras inspiraron al mundo a aventurarse al mar: "¿Mi tesoro? Si lo queréis es vuestro... lo he escondido todo en ese lugar". Y así dio comienzo lo que se conoce como la Gran Era de la Piratería, lanzando a cientos de piratas al mar para encontrar el gran tesoro One Piece.</p>
+            <p><h4>Publicado: 1999 (TV-14) Action & Adventure, Comedia, Animación</h4></p>
+            <p>Sinopsis: Riqueza, fama, poder... un hombre había obtenido todo en este mundo, era el Rey de los Piratas Gold D. Roger. Antes de morir sus últimas palabras inspiraron al mundo a aventurarse al mar: "¿Mi tesoro? Si lo queréis es vuestro... lo he escondido todo en ese lugar". Y así dio comienzo lo que se conoce como la Gran Era de la Piratería, lanzando a cientos de piratas al mar para encontrar el gran tesoro One Piece. Esta serie relata las aventuras y desventuras de uno de esos piratas, Monkey D. Luffy, quien accidentalmente de pequeño, comió una Fruta del Diablo (Akuma no Mi en japonés), en particular una Gomu Gomu no Mi que hizo que su cuerpo ganara las propiedades físicas de la goma, convirtiéndose en el hombre de goma. Luffy, después de dicho suceso, decide que se convertirá en el próximo Rey de los Piratas y para ello, deberá encontrar el "One Piece".</p>
             <div class="buttons">
-                <button class="btn-lang" onclick="toggleFullscreen()">Pantalla Completa</button>
-                <button class="btn-download" onclick="window.location.href='https://example.com/download';">Descargar</button>
+                <button class="btn-lang" onclick="toggleFullscreen()">Pantalla Completa</button> 
+                <button class="btn-episode">Selecciona un capítulo</button>
+                <button class="btn-download">Descargar</button> <!-• Botón de descarga -->
             </div>
             <div class="seasons">
                 <h3>Temporadas</h3>
                 <div class="season-list">
                     <div class="season-item" data-season="1">Temporada 1</div>
+                    
                 </div>
             </div>
             <div class="episodes" id="episodesSection" style="display: none;">
                 <h3>Capítulos</h3>
-                <div class="episode-list"></div>
+                <div class="episode-list">
+                    <!-• Capítulos se mostrarán aquí -->
+                </div>
             </div>
-        </div>
-        <div class="note">
-            CUALQUIER ERROR QUE SE PRESENTE COMUNICARLO EN EL GRUPO DE TELEGRAM, EL GRUPO SE ENCUENTRA EN AJUSTES
         </div>
     </div>
     <script>
@@ -179,88 +157,98 @@
         const episodeList = document.querySelector('.episode-list');
         const episodesSection = document.getElementById('episodesSection');
         const videoPlayer = document.getElementById('videoPlayer');
+        const videoSection = document.getElementById('videoSection');
+        const episodeButton = document.querySelector('.btn-episode');
         const downloadButton = document.querySelector('.btn-download');
-        const playButton = document.getElementById('playButton');
-
         const capítulos = [
-            { 
-                temporada: 1, 
-                episodios: Array.from({ length: 10 }, (_, i) => `Episodio ${i + 1}`) // Solo 10 episodios de ejemplo
-            }
+            { temporada: 1, episodios: Array.from({length: 750}, (_, i) => `Episodio ${i + 1}`) },
+            { temporada: 2, episodios: Array.from({length: 18}, (_, i) => `Episodio ${i + 1}`) },
+            { temporada: 3, episodios: Array.from({length: 11}, (_, i) => `Episodio ${i + 1}`) },
+            { temporada: 4, episodios: Array.from({length: 8}, (_, i) => `Episodio ${i + 1}`) }
         ];
-
+        // URLs de visualización de los episodios por temporada
         const urlsVisualización = {
             1: [
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/1.mp4&titulo=One%20piece:%20(T1%20-%20E1)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/2.mp4&titulo=One%20piece:%20(T1%20-%20E2)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/3.mp4&titulo=One%20piece:%20(T1%20-%20E3)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/4.mp4&titulo=One%20piece:%20(T1%20-%20E4)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/5.mp4&titulo=One%20piece:%20(T1%20-%20E5)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/6.mp4&titulo=One%20piece:%20(T1%20-%20E6)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/7.mp4&titulo=One%20piece:%20(T1%20-%20E7)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/8.mp4&titulo=One%20piece:%20(T1%20-%20E8)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/9.mp4&titulo=One%20piece:%20(T1%20-%20E9)&tiempo=125",
-                "https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/10.mp4&titulo=One%20piece:%20(T1%20-%20E10)&tiempo=125",
+                'https://ryderjet.com/embed/90mwgra8u8ij', 
+                'https://ryderjet.com/embed/4phv9h77dzch', 
+                'https://example.com/view/season1/episode3.html',
+                // ... más URLs para otros capítulos de la temporada 1
+            ],
+            2: [
+                'https://ryderjet.com/embed/vftag6e6wk4k', 
+                'https://example.com/view/season2/episode2.html', 
+                'https://example.com/view/season2/episode3.html',
+                // ... más URLs para otros capítulos de la temporada 2
+            ],
+            3: [
+                'https://ryderjet.com/embed/krd4ddpdlzjw', 
+                'https://example.com/view/season3/episode2.html',
+                'https://example.com/view/season3/episode3.html',
+                // ... más URLs para otros capítulos de la temporada 3
+            ],
+            4: [
+                'https://ryderjet.com/embed/5uio5usvgsjg', 
+                'https://example.com/view/season4/episode2.html', 
+                'https://example.com/view/season4/episode3.html',
+                // ... más URLs para otros capítulos de la temporada 4
+            ]
+        };
+        // URLs de descarga de los episodios por temporada
+        const urlsDescarga = {
+            1: [
+                'https://example.com/download/season1/episode1.mp4',
+                'https://example.com/download/season1/episode2.mp4',
+                'https://example.com/download/season1/episode3.mp4',
+                // ... más URLs para otros capítulos de la temporada 1
+            ],
+            2: [
+                'https://example.com/download/season2/episode1.mp4',
+                'https://example.com/download/season2/episode2.mp4',
+                'https://example.com/download/season2/episode3.mp4',
+                // ... más URLs para otros capítulos de la temporada 2
+            ],
+            3: [
+                'https://example.com/download/season3/episode1.mp4',
+                'https://example.com/download/season3/episode2.mp4',
+                'https://example.com/download/season3/episode3.mp4',
+                // ... más URLs para otros capítulos de la temporada 3
+            ],
+            4: [
+                'https://example.com/download/season4/episode1.mp4',
+                'https://example.com/download/season4/episode2.mp4',
+                'https://example.com/download/season4/episode3.mp4',
+                // ... más URLs para otros capítulos de la temporada 4
             ]
         };
 
-        const urlsDescarga = {
-            1: "https://example.com/download" // URL única para la descarga
-        };
-
-        let selectedSeason = null;
-
         seasonItems.forEach(item => {
             item.addEventListener('click', () => {
-                selectedSeason = parseInt(item.dataset.season);
-                episodeList.innerHTML = '';
-                const episodiosTemporada = capítulos.find(cap => cap.temporada === selectedSeason);
+                const season = parseInt(item.dataset.season);
+                episodeList.innerHTML = ''; // Limpia la lista de capítulos
+                const episodiosTemporada = capítulos.find(cap => cap.temporada === season);
                 if (episodiosTemporada) {
                     episodiosTemporada.episodios.forEach((episodio, index) => {
                         const episodeItem = document.createElement('div');
                         episodeItem.classList.add('episode-item');
                         episodeItem.textContent = episodio;
-
-                        // Determina la etiqueta "SUB" o "ES" según la lógica
-                        const label = (selectedSeason === 1 && index < 2) ? 'ES' : 'SUB';
-                        episodeItem.setAttribute('data-label', label);
-
+                        episodeItem.setAttribute('data-label', 'SUB'); // Añadir etiqueta de subtítulos
                         episodeItem.addEventListener('click', () => {
-                            const urlVisualización = urlsVisualización[selectedSeason][index];
+                            let urlVisualización = urlsVisualización[season][index];
                             videoPlayer.src = urlVisualización;
-                            videoPlayer.style.display = 'block'; // Mostrar el iframe
+                            videoSection.scrollIntoView();
+                            episodeButton.textContent = episodio;
                             downloadButton.onclick = () => {
-                                window.open(urlsDescarga, '_blank'); // Redirige a la URL única de descarga
+                                window.open(urlsDescarga[season][index], '_blank');
                             };
-                            document.querySelectorAll('.episode-item').forEach(el => el.classList.remove('selected'));
                             episodeItem.classList.add('selected');
-
-                            // Desplazar hacia el video
-                            window.scrollTo({
-                                top: document.getElementById("videoSection").offsetTop,
-                                behavior: 'smooth'
-                            });
                         });
                         episodeList.appendChild(episodeItem);
                     });
-                    episodesSection.style.display = 'block';
+                    episodesSection.style.display = 'block'; // Muestra la sección de capítulos
                     document.querySelectorAll('.season-item').forEach(el => el.classList.remove('selected'));
-                    item.classList.add('selected');
-                } else {
-                    episodesSection.style.display = 'none';
+                    item.classList.add('selected'); // Marca la temporada seleccionada
                 }
             });
-        });
-
-        playButton.addEventListener('click', () => {
-            if (selectedSeason !== null) {
-                const firstEpisodeItem = episodeList.firstChild;
-                if (firstEpisodeItem) {
-                    firstEpisodeItem.click(); // Simula el clic en el primer episodio
-                }
-            }
-            videoPlayer.style.display = 'block'; // Muestra el iframe
-            playButton.style.display = 'none'; // Oculta el botón de play
         });
 
         function toggleFullscreen() {
@@ -271,6 +259,5 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 </body>
 </html>
