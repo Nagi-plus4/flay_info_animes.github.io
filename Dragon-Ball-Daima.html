@@ -1,301 +1,283 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nagi Plus • Dragon Ball Daima</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-            scroll-behavior: smooth;
-            background: url('https://media.themoviedb.org/t/p/w780/oUmWLyeko3kYdUr8DBLIsxwcugl.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1;
-        }
-        .header {
-            height: 300px;
-            display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-        }
-        .content {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 2;
-        }
-        .details h1 {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        .details p {
-            margin: 5px 0;
-        }
-        .buttons {
-            margin: 10px 0;
-            display: flex;
-            gap: 10px;
-        }
-        .btn-lang, .btn-download {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 0; /* Bordes puntiagudos */
-        }
-        .btn-download {
-            background-color: #FFD700;
-            color: black;
-        }
-        .season-list, .episode-list {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .season-item, .episode-item {
-            background-color: #444;
-            padding: 15px 20px;
-            cursor: pointer;
-            text-align: center;
-            border-radius: 0; /* Bordes puntiagudos */
-            width: 100%;
-            flex-basis: 100px;
-            box-sizing: border-box;
-            font-size: 16px;
-            position: relative; /* Para la posición de la etiqueta */
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .episode-item.selected, .season-item.selected {
-            background-color: white; /* Cambia a blanco al ser seleccionado */
-            color: black;
-        }
-        .episode-item::before {
-            content: attr(data-label);
-            position: absolute;
-            top: 5px; /* Ajusta la posición vertical */
-            right: 5px; /* Ajusta la posición horizontal */
-            font-size: 8px;
-            color: white;
-            background-color: #34568B;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            color: #333;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: transform 0.3s;
-            animation: wave 1.5s infinite;
-            z-index: 3;
-        }
-        .play-button:hover {
-            transform: scale(1.1);
-        }
-        .play-button:active {
-            transform: scale(0.9);
-        }
-        @keyframes wave {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.05);
-            }
-        }
-        .note {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #FFD700; /* Color dorado */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dragon Ball Daima</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      background-image: url('https://media.themoviedb.org/t/p/w780/oUmWLyeko3kYdUr8DBLIsxwcugl.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.8);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .container-fluid {
+      position: relative;
+      padding: 20px;
+    }
+    .video-section {
+      width: 100%;
+      height: 315px;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .description {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .icons {
+      display: flex;
+      gap: 10px;
+    }
+    .icon {
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .icon:hover {
+      color: #ff0000;
+    }
+    .season-select {
+      background-color: #222;
+      color: #fff;
+      border: 2px solid #555;
+      border-radius: 5px;
+      padding: 10px 25px;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px top 50%;
+      background-size: 12px;
+    }
+    .episodes {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #333 #111;
+      margin-bottom: 20px;
+    }
+    .episodes::-webkit-scrollbar {
+      height: 8px;
+    }
+    .episodes::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 10px;
+    }
+    .episode-button {
+      flex: 0 0 auto;
+      margin: 5px;
+      padding: 15px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #555, #333);
+      color: white;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .episode-button.active {
+      background: linear-gradient(135deg, #ff4b2b, #ff416c);
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+    .synopsis {
+      margin: 20px 0;
+    }
+    *:focus {
+      outline: none !important;
+    }
+  </style>
 </head>
 <body>
-    <div class="overlay"></div>
-    <div class="header" id="videoSection">
-        <iframe id="videoPlayer" src=""></iframe>
-        <button class="play-button" id="playButton">
-            <i class="fas fa-play"></i>
-        </button>
-    </div>
-    <div class="content">
-        <div class="details">
-            <h1>Dragon Ball Daima</h1>
-            <p><h4>Publicado: 2024 | 
-Animación, Action & Adventure, Comedia, Sci-Fi & Fantasy.</h4></p>
-            <p>Sinopsis: Misteriosamente transformados en mini versiones de sí mismos, Goku y sus amigos viajan al Reino de los Demonios para descubrir la verdad y encontrar una cura.</p>
-            <div class="buttons">
-                <button class="btn-lang" onclick="toggleFullscreen()">Pantalla Completa</button>
-                <button class="btn-download" id="downloadBtn">Descargar</button>
-            </div>
-            <div class="seasons">
-                <h3>Temporadas</h3>
-                <div class="season-list">
-                    <div class="season-item" data-season="1">Temporada 1</div>
-                </div>
-            </div>
-            <div class="episodes" id="episodesSection" style="display: none;">
-                <h3>Capítulos</h3>
-                <div class="episode-list"></div>
-            </div>
-        </div>
-        <div class="note">
-            CUALQUIER ERROR QUE SE PRESENTE COMUNICARLO EN EL GRUPO DE TELEGRAM, EL GRUPO SE ENCUENTRA EN AJUSTES
-        </div>
+  <div class="overlay"></div>
+  <div class="container-fluid">
+    <div class="video-section">
+      <iframe id="video-iframe" src="https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://seed177.bitchute.com/MWp0QUjJylLP/lNaWq7K23ZTc.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E1)&tiempo=10" allowfullscreen></iframe>
+
     </div>
 
-    <!-• Modal para las opciones de descarga -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Selecciona una opción de descarga:</h2>
-            <div class="download-option" onclick="window.location.href='https://example.com/download1';">Opción de descarga 1</div>
-            
-        </div>
+    <div class="description">
+      <h1 id="series-title">Dragon Ball Daima</h1>
+      <div class="icons">
+        <i class="fas fa-expand icon" onclick="toggleFullScreen()" title="Pantalla Completa"></i>
+        <i class="fas fa-download icon" onclick="downloadSeries()" title="Descargar Serie"></i>
+      </div>
     </div>
 
-    <script>
-        const seasonItems = document.querySelectorAll('.season-item');
-        const episodeList = document.querySelector('.episode-list');
-        const episodesSection = document.getElementById('episodesSection');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const downloadButton = document.getElementById('downloadBtn');
-        const playButton = document.getElementById('playButton');
+    <div class="season-info d-flex justify-content-between align-items-center mb-2">
+      <select id="season-select" class="season-select" onchange="changeSeason(this.value)">
+        <option value="1">Temporada 1</option>
+      </select>
+      <span>Actualizado hasta el 20</span>
+    </div>
 
-        const capítulos = [
-            { 
-                temporada: 1, 
-                episodios: Array.from({ length: 10 }, (_, i) => Episodio ${i + 1}) // Solo 10 episodios de ejemplo
-            }
-        ];
+    <div class="episodes" id="episodes-container"></div>
 
-        const urlsVisualización = {
-            1: [
-                "https://example.com/ep1",
-                "https://example.com/ep2",
-                "https://example.com/ep3",
-                "https://example.com/ep4",
-                "https://example.com/ep5",
-                "https://example.com/ep6",
-                "https://example.com/ep7",
-                "https://example.com/ep8",
-                "https://example.com/ep9",
-                "https://example.com/ep10"
-            ]
-        };
+    <div class="synopsis">
+      <h2>Sinopsis</h2>
+      <p id="synopsis-text">
+         Misteriosamente transformados en mini versiones de sí mismos, Goku y sus amigos viajan al Reino de los Demonios para descubrir la verdad y encontrar una cura.
+      </p>
+      <button id="toggle-button" class="btn btn-link text-light p-0">Ver más</button>
+    </div>
+  </div>
 
-        let selectedSeason = null;
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const seasons = {
+      1: [
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://seed177.bitchute.com/MWp0QUjJylLP/lNaWq7K23ZTc.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E1)&tiempo=10',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://seed177.bitchute.com/MWp0QUjJylLP/1d9xawDgDFPE.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E2)&tiempo=180',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://seed125.bitchute.com/MWp0QUjJylLP/WvzbEf4yZKYy.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E3)&tiempo=140',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjkwNTBf/S1%20E04%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E4)&tiempo=97',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjkwNTRf/S1%20E05%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E5)&tiempo=160',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjg5MTVf/S1%20E06%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E6)&tiempo=140',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjg5MjBf/S1%20E07%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4%20%281%29.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E7)&tiempo=100',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjg5MjRf/S1%20E08%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E8)&tiempo=100',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjg5Mjlf/S1%20E09%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E9)&tiempo=100',
+        'https://nagi-plus.github.io/VID_NAGI_PLUS.github.io/Vid.html?link=https://od.lk/s/M18zMTUyNjg5MzJf/S1%20E10%20Dragon%20Ball%20Daima%20Temporada%201%20%282024%29%20mkv%20mp4.mp4&titulo=Dragon%20Ball%20Daima%20:(T1%20-%20E10)&tiempo=100',
+        
+      ]
+    };
 
-        seasonItems.forEach(item => {
-            item.addEventListener('click', () => {
-                selectedSeason = parseInt(item.dataset.season);
-                episodeList.innerHTML = '';
-                const episodiosTemporada = capítulos.find(cap => cap.temporada === selectedSeason);
-                if (episodiosTemporada) {
-                    episodiosTemporada.episodios.forEach((episodio, index) => {
-                        const episodeItem = document.createElement('div');
-                        episodeItem.classList.add('episode-item');
-                        episodeItem.textContent = episodio;
+    const episodesContainer = document.getElementById('episodes-container');
+    const videoIframe = document.getElementById('video-iframe');
+    const seasonSelect = document.getElementById('season-select');
+    const seriesTitle = document.getElementById('series-title').textContent.trim().replace(/\s+/g, '_');
 
-                        // Determina la etiqueta "SUB" o "ES" según la lógica
-                        const label = (selectedSeason === 1 && index < 2) ? 'ES' : 'SUB';
-                        episodeItem.setAttribute('data-label', label);
+    function changeSeason(seasonNumber) {
+      episodesContainer.innerHTML = '';
+      const videoURLs = seasons[seasonNumber];
 
-                        episodeItem.addEventListener('click', () => {
-                            const urlVisualización = urlsVisualización[selectedSeason][index];
-                            videoPlayer.src = urlVisualización;
-                            videoPlayer.style.display = 'block'; // Mostrar el iframe
+      videoURLs.forEach((videoURL, index) => {
+        const button = document.createElement('button');
+        button.className = 'episode-button';
+        button.textContent = index + 1;
 
-                            // Desplazar hacia el video
-                            window.scrollTo({
-                                top: document.getElementById("videoSection").offsetTop,
-                                behavior: 'smooth'
-                            });
-
-                            // Cambiar color al seleccionar el capítulo
-                            document.querySelectorAll('.episode-item').forEach(el => el.classList.remove('selected'));
-                            episodeItem.classList.add('selected'); // Cambia el color al seleccionar
-                        });
-                        episodeList.appendChild(episodeItem);
-                    });
-                    episodesSection.style.display = 'block';
-                    document.querySelectorAll('.season-item').forEach(el => el.classList.remove('selected'));
-                    item.classList.add('selected');
-                } else {
-                    episodesSection.style.display = 'none';
-                }
-            });
+        button.addEventListener('click', function () {
+          document.querySelectorAll('.episode-button').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          videoIframe.src = videoURL;
+          this.blur();
+          localStorage.setItem(`${seriesTitle}_ultimoEpisodio`, index);
+          localStorage.setItem(`${seriesTitle}_ultimaTemporada`, seasonNumber);
         });
 
-        playButton.addEventListener('click', () => {
-            if (selectedSeason !== null) {
-                const firstEpisodeItem = episodeList.firstChild;
-                if (firstEpisodeItem) {
-                    firstEpisodeItem.click(); // Simula el clic en el primer episodio
-                }
-            }
-            videoPlayer.style.display = 'block'; // Muestra el iframe
-            playButton.style.display = 'none'; // Oculta el botón de play
-        });
+        episodesContainer.appendChild(button);
+      });
 
-        // Modal para opciones de descarga
-        const modal = document.getElementById("myModal");
-        const closeModal = document.getElementsByClassName("close")[0];
+      const ultimoEpisodio = localStorage.getItem(`${seriesTitle}_ultimoEpisodio`);
+      const ultimaTemporada = localStorage.getItem(`${seriesTitle}_ultimaTemporada`);
 
-        downloadButton.onclick = function() {
-            modal.style.display = "block"; // Muestra el modal
-        }
+      if (ultimoEpisodio !== null && `${seasonNumber}` === ultimaTemporada) {
+        const btn = document.querySelectorAll('.episode-button')[ultimoEpisodio];
+        if (btn) btn.click();
+      }
 
-        closeModal.onclick = function() {
-            modal.style.display = "none"; // Esconde el modal
-        }
+      localStorage.setItem(`${seriesTitle}_ultimaTemporadaSeleccionada`, seasonNumber);
+    }
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none"; // Esconde el modal si se hace clic fuera
-            }
-        }
+    const synopsisText = document.getElementById('synopsis-text');
+    const toggleButton = document.getElementById('toggle-button');
+    const fullText = synopsisText.textContent;
+    const truncatedText = fullText.substring(0, 100) + '...';
+    synopsisText.textContent = truncatedText;
 
-        function toggleFullscreen() {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
+    toggleButton.addEventListener('click', function () {
+      if (toggleButton.textContent === 'Ver más') {
+        synopsisText.textContent = fullText;
+        toggleButton.textContent = 'Ver menos';
+      } else {
+        synopsisText.textContent = truncatedText;
+        toggleButton.textContent = 'Ver más';
+      }
+    });
+
+    function toggleFullScreen() {
+      if (videoIframe.requestFullscreen) {
+        videoIframe.requestFullscreen();
+      } else if (videoIframe.mozRequestFullScreen) {
+        videoIframe.mozRequestFullScreen();
+      } else if (videoIframe.webkitRequestFullscreen) {
+        videoIframe.webkitRequestFullscreen();
+      } else if (videoIframe.msRequestFullscreen) {
+        videoIframe.msRequestFullscreen();
+      }
+      Swal.fire({
+        icon: 'info',
+        title: 'Pantalla Completa',
+        text: 'El modo de pantalla completa ha sido activado.'
+      });
+    }
+
+    function downloadSeries() {
+      Swal.fire({
+        title: 'Descargar Episodio',
+        text: 'Selecciona un episodio para descargar:',
+        input: 'select',
+        inputOptions: {
+          0: 'Episodio 1',
+          1: 'Episodio 2',
+          2: 'Episodio 3'
+        },
+        inputPlaceholder: 'Selecciona un episodio',
+        showCancelButton: true,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              const downloadLinks = [
+                'LINK_DESCARGA_1',
+                'LINK_DESCARGA_2',
+                'LINK_DESCARGA_3'
+              ];
+              window.location.href = downloadLinks[value];
+              resolve();
             } else {
-                videoSection.requestFullscreen();
+              resolve('Debes seleccionar un episodio');
             }
+          });
         }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+      });
+    }
+
+    const lastSeason = localStorage.getItem(`${seriesTitle}_ultimaTemporadaSeleccionada`) || 1;
+    seasonSelect.value = lastSeason;
+    changeSeason(lastSeason);
+  </script>
 </body>
 </html>
