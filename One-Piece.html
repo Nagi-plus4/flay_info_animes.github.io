@@ -1,462 +1,305 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAGI PLUS ONE PIECE</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-            scroll-behavior: smooth;
-            position: relative; /* Necesario para el overlay */
-        }
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://media.themoviedb.org/t/p/w780/4Mt7WHox67uJ1yErwTBFcV8KWgG.jpg'); /* Imagen de fondo */
-            background-size: cover;
-            background-position: center;
-            z-index: 0; /* Detrás de todo */
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Opacidad del fondo */
-            z-index: 1; /* Sobre la imagen de fondo */
-        }
-        .header {
-            height: 300px;
-            z-index: 2; /* Por encima del overlay */
-            position: relative;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .content {
-            padding: 20px;
-            position: relative;
-            z-index: 2; /* Por encima del overlay */
-        }
-        .details h1 {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        .details p {
-            margin: 5px 0;
-        }
-        .buttons {
-            margin: 10px 0;
-            display: flex;
-            gap: 10px;
-        }
-        .btn-lang, .btn-episode, .btn-download {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .btn-download {
-            background-color: #FFD700; /* Dorado */
-            color: black; /* Texto negro */
-        }
-        .btn-lang:active, .btn-episode:active, .btn-download:active {
-            background-color: white; /* Cambia a blanco al presionar */
-            color: black; /* Texto negro */
-        }
-        .season-list, .episode-list {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .season-item, .episode-item {
-            background-color: #444;
-            padding: 10px;
-            cursor: pointer;
-            text-align: center;
-            width: 100px;
-            position: relative;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .episode-item.selected, .season-item.selected {
-            background-color: #FFD700; /* Dorado */
-            color: black;
-        }
-        .episodes {
-            display: none;
-        }
-        .episode-item::before {
-            content: attr(data-label);
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 8px;
-            color: white;
-            background-color: #34568B;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .btn-lang {
-            background: linear-gradient(to right, #00FF00, #FF0000, #FF69B4, #FFFFE0);
-            border-radius: 10px;
-            color: #000;
-            text-shadow: 1px 1px 2px #000;
-            transition: background-position 0.5s ease-in-out;
-        }
-        .btn-lang:hover {
-            background-position: 100% 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One Piece</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      background-image: url('https://media.themoviedb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.8);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .container-fluid {
+      position: relative;
+      padding: 20px;
+    }
+    .video-section {
+      width: 100%;
+      height: 315px;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .description {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .icons {
+      display: flex;
+      gap: 10px;
+    }
+    .icon {
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .icon:hover {
+      color: #ff0000;
+    }
+    .season-select {
+      background-color: #222;
+      color: #fff;
+      border: 2px solid #555;
+      border-radius: 5px;
+      padding: 10px 25px;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px top 50%;
+      background-size: 12px;
+    }
+    .episodes {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #333 #111;
+      margin-bottom: 20px;
+    }
+    .episodes::-webkit-scrollbar {
+      height: 8px;
+    }
+    .episodes::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 10px;
+    }
+    .episode-button {
+      flex: 0 0 auto;
+      margin: 5px;
+      padding: 15px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #555, #333);
+      color: white;
+      font-size: 1em;
+      border-radius: 0px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .episode-button.active {
+      background: linear-gradient(135deg, #ff4b2b, #ff416c);
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+    .synopsis {
+      margin: 20px 0;
+    }
+    *:focus {
+      outline: none !important;
+    }
+  </style>
 </head>
 <body>
-    <div class="background"></div> <!-• Imagen de fondo -->
-    <div class="overlay"></div> <!-• Capa de opacidad -->
-    <div class="header" id="videoSection">
-        <iframe id="videoPlayer" src=""></iframe> <!-• URL inicial -->
-    </div>
-    <div class="content">
-        <div class="details">
-            <h1>One Piece</h1>
-            <p><h4>Publicado: 1999 (TV-14) Action & Adventure, Comedia, Animación</h4></p>
-            <p>Sinopsis: Riqueza, fama, poder... un hombre había obtenido todo en este mundo, era el Rey de los Piratas Gold D. Roger. Antes de morir sus últimas palabras inspiraron al mundo a aventurarse al mar: "¿Mi tesoro? Si lo queréis es vuestro... lo he escondido todo en ese lugar". Y así dio comienzo lo que se conoce como la Gran Era de la Piratería, lanzando a cientos de piratas al mar para encontrar el gran tesoro One Piece. Esta serie relata las aventuras y desventuras de uno de esos piratas, Monkey D. Luffy, quien accidentalmente de pequeño, comió una Fruta del Diablo (Akuma no Mi en japonés), en particular una Gomu Gomu no Mi que hizo que su cuerpo ganara las propiedades físicas de la goma, convirtiéndose en el hombre de goma. Luffy, después de dicho suceso, decide que se convertirá en el próximo Rey de los Piratas y para ello, deberá encontrar el "One Piece".</p>
-            <div class="buttons">
-                <button class="btn-lang" onclick="toggleFullscreen()">Pantalla Completa</button> 
-                <button class="btn-episode">Selecciona un capítulo</button>
-                <button class="btn-download">Descargar</button> <!-• Botón de descarga -->
-            </div>
-            <div class="seasons">
-                <h3>Temporadas</h3>
-                <div class="season-list">
-                    <div class="season-item" data-season="1">Temporada 1</div>
-                    
-                </div>
-            </div>
-            <div class="episodes" id="episodesSection" style="display: none;">
-                <h3>Capítulos</h3>
-                <div class="episode-list">
-                    <!-• Capítulos se mostrarán aquí -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        const seasonItems = document.querySelectorAll('.season-item');
-        const episodeList = document.querySelector('.episode-list');
-        const episodesSection = document.getElementById('episodesSection');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const videoSection = document.getElementById('videoSection');
-        const episodeButton = document.querySelector('.btn-episode');
-        const downloadButton = document.querySelector('.btn-download');
-        const capítulos = [
-            { temporada: 1, episodios: Array.from({length: 750}, (_, i) => `Episodio ${i + 1}`) },
-            { temporada: 2, episodios: Array.from({length: 18}, (_, i) => `Episodio ${i + 1}`) },
-            { temporada: 3, episodios: Array.from({length: 11}, (_, i) => `Episodio ${i + 1}`) },
-            { temporada: 4, episodios: Array.from({length: 8}, (_, i) => `Episodio ${i + 1}`) }
-        ];
-        // URLs de visualización de los episodios por temporada
-        const urlsVisualización = {
-            1: [
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/1.mp4&titulo=One%20piece%20%20:(T1%20-%20E1)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/2.mp4&titulo=One%20piece%20%20:(T1%20-%20E2)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/3.mp4&titulo=One%20piece%20%20:(T1%20-%20E3)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/4.mp4&titulo=One%20piece%20%20:(T1%20-%20E4)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/5.mp4&titulo=One%20piece%20%20:(T1%20-%20E5)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/6.mp4&titulo=One%20piece%20%20:(T1%20-%20E6)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/7.mp4&titulo=One%20piece%20%20:(T1%20-%20E7)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/8.mp4&titulo=One%20piece%20%20:(T1%20-%20E8)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/9.mp4&titulo=One%20piece%20%20:(T1%20-%20E9)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/10.mp4&titulo=One%20piece%20%20:(T1%20-%20E10)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/11.mp4&titulo=One%20piece%20%20:(T1%20-%20E11)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/12.mp4&titulo=One%20piece%20%20:(T1%20-%20E12)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/13.mp4&titulo=One%20piece%20%20:(T1%20-%20E13)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/14.mp4&titulo=One%20piece%20%20:(T1%20-%20E14)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/15.mp4&titulo=One%20piece%20%20:(T1%20-%20E15)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/16.mp4&titulo=One%20piece%20%20:(T1%20-%20E16)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/17.mp4&titulo=One%20piece%20%20:(T1%20-%20E17)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/18.mp4&titulo=One%20piece%20%20:(T1%20-%20E18)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/19.mp4&titulo=One%20piece%20%20:(T1%20-%20E19)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/20.mp4&titulo=One%20piece%20%20:(T1%20-%20E20)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/21.mp4&titulo=One%20piece%20%20:(T1%20-%20E21)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/22.mp4&titulo=One%20piece%20%20:(T1%20-%20E22)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/23.mp4&titulo=One%20piece%20%20:(T1%20-%20E23)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/24.mp4&titulo=One%20piece%20%20:(T1%20-%20E24)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/25.mp4&titulo=One%20piece%20%20:(T1%20-%20E25)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/26.mp4&titulo=One%20piece%20%20:(T1%20-%20E26)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/27.mp4&titulo=One%20piece%20%20:(T1%20-%20E27)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/28.mp4&titulo=One%20piece%20%20:(T1%20-%20E28)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/29.mp4&titulo=One%20piece%20%20:(T1%20-%20E29)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/30.mp4&titulo=One%20piece%20%20:(T1%20-%20E30)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/31.mp4&titulo=One%20piece%20%20:(T1%20-%20E31)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/32.mp4&titulo=One%20piece%20%20:(T1%20-%20E32)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/33.mp4&titulo=One%20piece%20%20:(T1%20-%20E33)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/34.mp4&titulo=One%20piece%20%20:(T1%20-%20E34)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/35.mp4&titulo=One%20piece%20%20:(T1%20-%20E35)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/36.mp4&titulo=One%20piece%20%20:(T1%20-%20E36)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/37.mp4&titulo=One%20piece%20%20:(T1%20-%20E37)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/38.mp4&titulo=One%20piece%20%20:(T1%20-%20E38)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/39.mp4&titulo=One%20piece%20%20:(T1%20-%20E39)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/40.mp4&titulo=One%20piece%20%20:(T1%20-%20E40)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/41.mp4&titulo=One%20piece%20%20:(T1%20-%20E41)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/42.mp4&titulo=One%20piece%20%20:(T1%20-%20E42)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/43.mp4&titulo=One%20piece%20%20:(T1%20-%20E43)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/44.mp4&titulo=One%20piece%20%20:(T1%20-%20E44)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/45.mp4&titulo=One%20piece%20%20:(T1%20-%20E45)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/46.mp4&titulo=One%20piece%20%20:(T1%20-%20E46)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/47.mp4&titulo=One%20piece%20%20:(T1%20-%20E47)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/48.mp4&titulo=One%20piece%20%20:(T1%20-%20E48)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/49.mp4&titulo=One%20piece%20%20:(T1%20-%20E49)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/50.mp4&titulo=One%20piece%20%20:(T1%20-%20E50)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/51.mp4&titulo=One%20piece%20%20:(T1%20-%20E51)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/52.mp4&titulo=One%20piece%20%20:(T1%20-%20E52)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/53.mp4&titulo=One%20piece%20%20:(T1%20-%20E53)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/54.mp4&titulo=One%20piece%20%20:(T1%20-%20E54)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/55.mp4&titulo=One%20piece%20%20:(T1%20-%20E55)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/56.mp4&titulo=One%20piece%20%20:(T1%20-%20E56)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/57.mp4&titulo=One%20piece%20%20:(T1%20-%20E57)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/58.mp4&titulo=One%20piece%20%20:(T1%20-%20E58)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/59.mp4&titulo=One%20piece%20%20:(T1%20-%20E59)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/60.mp4&titulo=One%20piece%20%20:(T1%20-%20E60)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/61.mp4&titulo=One%20piece%20%20:(T1%20-%20E61)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/62.mp4&titulo=One%20piece%20%20:(T1%20-%20E62)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/63.mp4&titulo=One%20piece%20%20:(T1%20-%20E63)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/64.mp4&titulo=One%20piece%20%20:(T1%20-%20E64)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/65.mp4&titulo=One%20piece%20%20:(T1%20-%20E65)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/66.mp4&titulo=One%20piece%20%20:(T1%20-%20E66)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/67.mp4&titulo=One%20piece%20%20:(T1%20-%20E67)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/68.mp4&titulo=One%20piece%20%20:(T1%20-%20E68)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/69.mp4&titulo=One%20piece%20%20:(T1%20-%20E69)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/70.mp4&titulo=One%20piece%20%20:(T1%20-%20E70)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/71.mp4&titulo=One%20piece%20%20:(T1%20-%20E71)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/72.mp4&titulo=One%20piece%20%20:(T1%20-%20E72)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/73.mp4&titulo=One%20piece%20%20:(T1%20-%20E73)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/74.mp4&titulo=One%20piece%20%20:(T1%20-%20E74)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/75.mp4&titulo=One%20piece%20%20:(T1%20-%20E75)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/76.mp4&titulo=One%20piece%20%20:(T1%20-%20E76)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/77.mp4&titulo=One%20piece%20%20:(T1%20-%20E77)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/78.mp4&titulo=One%20piece%20%20:(T1%20-%20E78)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/79.mp4&titulo=One%20piece%20%20:(T1%20-%20E79)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/80.mp4&titulo=One%20piece%20%20:(T1%20-%20E80)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/81.mp4&titulo=One%20piece%20%20:(T1%20-%20E81)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/82.mp4&titulo=One%20piece%20%20:(T1%20-%20E82)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/83.mp4&titulo=One%20piece%20%20:(T1%20-%20E83)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/84.mp4&titulo=One%20piece%20%20:(T1%20-%20E84)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/85.mp4&titulo=One%20piece%20%20:(T1%20-%20E85)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/86.mp4&titulo=One%20piece%20%20:(T1%20-%20E86)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/87.mp4&titulo=One%20piece%20%20:(T1%20-%20E87)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/88.mp4&titulo=One%20piece%20%20:(T1%20-%20E88)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/89.mp4&titulo=One%20piece%20%20:(T1%20-%20E89)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/90.mp4&titulo=One%20piece%20%20:(T1%20-%20E90)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/91.mp4&titulo=One%20piece%20%20:(T1%20-%20E91)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/92.mp4&titulo=One%20piece%20%20:(T1%20-%20E92)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/93.mp4&titulo=One%20piece%20%20:(T1%20-%20E93)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/94.mp4&titulo=One%20piece%20%20:(T1%20-%20E94)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/95.mp4&titulo=One%20piece%20%20:(T1%20-%20E95)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/96.mp4&titulo=One%20piece%20%20:(T1%20-%20E96)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/97.mp4&titulo=One%20piece%20%20:(T1%20-%20E97)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/98.mp4&titulo=One%20piece%20%20:(T1%20-%20E98)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/99.mp4&titulo=One%20piece%20%20:(T1%20-%20E99)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/100.mp4&titulo=One%20piece%20%20:(T1%20-%20E100)&tiempo=125',
-                // ...200 capitulos
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/101.mp4&titulo=One%20piece%20%20:(T1%20-%20E101)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/102.mp4&titulo=One%20piece%20%20:(T1%20-%20E102)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/103.mp4&titulo=One%20piece%20%20:(T1%20-%20E103)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/104.mp4&titulo=One%20piece%20%20:(T1%20-%20E104)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/105.mp4&titulo=One%20piece%20%20:(T1%20-%20E105)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/106.mp4&titulo=One%20piece%20%20:(T1%20-%20E106)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/107.mp4&titulo=One%20piece%20%20:(T1%20-%20E107)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/108.mp4&titulo=One%20piece%20%20:(T1%20-%20E108)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/109.mp4&titulo=One%20piece%20%20:(T1%20-%20E109)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/110.mp4&titulo=One%20piece%20%20:(T1%20-%20E110)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/111.mp4&titulo=One%20piece%20%20:(T1%20-%20E111)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/112.mp4&titulo=One%20piece%20%20:(T1%20-%20E112)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/113.mp4&titulo=One%20piece%20%20:(T1%20-%20E113)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/114.mp4&titulo=One%20piece%20%20:(T1%20-%20E114)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/115.mp4&titulo=One%20piece%20%20:(T1%20-%20E115)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/116.mp4&titulo=One%20piece%20%20:(T1%20-%20E116)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/117.mp4&titulo=One%20piece%20%20:(T1%20-%20E117)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/118.mp4&titulo=One%20piece%20%20:(T1%20-%20E118)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/119.mp4&titulo=One%20piece%20%20:(T1%20-%20E119)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/120.mp4&titulo=One%20piece%20%20:(T1%20-%20E120)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/121.mp4&titulo=One%20piece%20%20:(T1%20-%20E121)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/122.mp4&titulo=One%20piece%20%20:(T1%20-%20E122)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/123.mp4&titulo=One%20piece%20%20:(T1%20-%20E123)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/124.mp4&titulo=One%20piece%20%20:(T1%20-%20E124)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/125.mp4&titulo=One%20piece%20%20:(T1%20-%20E125)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/126.mp4&titulo=One%20piece%20%20:(T1%20-%20E126)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/127.mp4&titulo=One%20piece%20%20:(T1%20-%20E127)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/128.mp4&titulo=One%20piece%20%20:(T1%20-%20E128)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/129.mp4&titulo=One%20piece%20%20:(T1%20-%20E129)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/130.mp4&titulo=One%20piece%20%20:(T1%20-%20E130)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/131.mp4&titulo=One%20piece%20%20:(T1%20-%20E131)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/132.mp4&titulo=One%20piece%20%20:(T1%20-%20E132)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/133.mp4&titulo=One%20piece%20%20:(T1%20-%20E133)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/134.mp4&titulo=One%20piece%20%20:(T1%20-%20E134)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/135.mp4&titulo=One%20piece%20%20:(T1%20-%20E135)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/136.mp4&titulo=One%20piece%20%20:(T1%20-%20E136)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/137.mp4&titulo=One%20piece%20%20:(T1%20-%20E137)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/138.mp4&titulo=One%20piece%20%20:(T1%20-%20E138)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/139.mp4&titulo=One%20piece%20%20:(T1%20-%20E139)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/140.mp4&titulo=One%20piece%20%20:(T1%20-%20E140)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/141.mp4&titulo=One%20piece%20%20:(T1%20-%20E141)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/142.mp4&titulo=One%20piece%20%20:(T1%20-%20E142)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/143.mp4&titulo=One%20piece%20%20:(T1%20-%20E143)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/144.mp4&titulo=One%20piece%20%20:(T1%20-%20E144)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/145.mp4&titulo=One%20piece%20%20:(T1%20-%20E145)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/146.mp4&titulo=One%20piece%20%20:(T1%20-%20E146)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/147.mp4&titulo=One%20piece%20%20:(T1%20-%20E147)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/148.mp4&titulo=One%20piece%20%20:(T1%20-%20E148)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/149.mp4&titulo=One%20piece%20%20:(T1%20-%20E149)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/150.mp4&titulo=One%20piece%20%20:(T1%20-%20E150)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/151.mp4&titulo=One%20piece%20%20:(T1%20-%20E151)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/152.mp4&titulo=One%20piece%20%20:(T1%20-%20E152)&tiempo=115', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/153.mp4&titulo=One%20piece%20%20:(T1%20-%20E153)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/154.mp4&titulo=One%20piece%20%20:(T1%20-%20E154)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/155.mp4&titulo=One%20piece%20%20:(T1%20-%20E155)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/156.mp4&titulo=One%20piece%20%20:(T1%20-%20E156)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/157.mp4&titulo=One%20piece%20%20:(T1%20-%20E157)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/158.mp4&titulo=One%20piece%20%20:(T1%20-%20E158)&tiempo=115',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/159.mp4&titulo=One%20piece%20%20:(T1%20-%20E159)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/160.mp4&titulo=One%20piece%20%20:(T1%20-%20E160)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/161.mp4&titulo=One%20piece%20%20:(T1%20-%20E161)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/162.mp4&titulo=One%20piece%20%20:(T1%20-%20E162)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/163.mp4&titulo=One%20piece%20%20:(T1%20-%20E163)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/164.mp4&titulo=One%20piece%20%20:(T1%20-%20E164)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/165.mp4&titulo=One%20piece%20%20:(T1%20-%20E165)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/166.mp4&titulo=One%20piece%20%20:(T1%20-%20E166)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/167.mp4&titulo=One%20piece%20%20:(T1%20-%20E167)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/168.mp4&titulo=One%20piece%20%20:(T1%20-%20E168)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/169.mp4&titulo=One%20piece%20%20:(T1%20-%20E169)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/170.mp4&titulo=One%20piece%20%20:(T1%20-%20E170)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/171.mp4&titulo=One%20piece%20%20:(T1%20-%20E171)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/172.mp4&titulo=One%20piece%20%20:(T1%20-%20E172)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/173.mp4&titulo=One%20piece%20%20:(T1%20-%20E173)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/174.mp4&titulo=One%20piece%20%20:(T1%20-%20E174)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/175.mp4&titulo=One%20piece%20%20:(T1%20-%20E175)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/176.mp4&titulo=One%20piece%20%20:(T1%20-%20E176)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/177.mp4&titulo=One%20piece%20%20:(T1%20-%20E177)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/178.mp4&titulo=One%20piece%20%20:(T1%20-%20E178)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/179.mp4&titulo=One%20piece%20%20:(T1%20-%20E179)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/180.mp4&titulo=One%20piece%20%20:(T1%20-%20E180)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/181.mp4&titulo=One%20piece%20%20:(T1%20-%20E181)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/182.mp4&titulo=One%20piece%20%20:(T1%20-%20E182)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/183.mp4&titulo=One%20piece%20%20:(T1%20-%20E183)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/184.mp4&titulo=One%20piece%20%20:(T1%20-%20E184)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/185.mp4&titulo=One%20piece%20%20:(T1%20-%20E185)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/186.mp4&titulo=One%20piece%20%20:(T1%20-%20E186)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/187.mp4&titulo=One%20piece%20%20:(T1%20-%20E187)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/188.mp4&titulo=One%20piece%20%20:(T1%20-%20E188)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/189.mp4&titulo=One%20piece%20%20:(T1%20-%20E189)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/190.mp4&titulo=One%20piece%20%20:(T1%20-%20E190)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/191.mp4&titulo=One%20piece%20%20:(T1%20-%20E191)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/192.mp4&titulo=One%20piece%20%20:(T1%20-%20E192)&tiempo=125', 
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/193.mp4&titulo=One%20piece%20%20:(T1%20-%20E193)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/194.mp4&titulo=One%20piece%20%20:(T1%20-%20E194)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/195.mp4&titulo=One%20piece%20%20:(T1%20-%20E195)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/196.mp4&titulo=One%20piece%20%20:(T1%20-%20E196)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/197.mp4&titulo=One%20piece%20%20:(T1%20-%20E197)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/198.mp4&titulo=One%20piece%20%20:(T1%20-%20E198)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/199.mp4&titulo=One%20piece%20%20:(T1%20-%20E199)&tiempo=125',
-                'https://nagi-plus4.github.io/embed.github.io/REPRODUCTOR-OFICIAL-NAGI-PLUS.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/200.mp4&titulo=One%20piece%20%20:(T1%20-%20E200)&tiempo=125',
-                
-                // ... más URLs para otros capítulos de la temporada 1
-            ],
-            2: [
-                'https://ryderjet.com/embed/vftag6e6wk4k', 
-                'https://example.com/view/season2/episode2.html', 
-                'https://example.com/view/season2/episode3.html',
-                // ... más URLs para otros capítulos de la temporada 2
-            ],
-            3: [
-                'https://ryderjet.com/embed/krd4ddpdlzjw', 
-                'https://example.com/view/season3/episode2.html',
-                'https://example.com/view/season3/episode3.html',
-                // ... más URLs para otros capítulos de la temporada 3
-            ],
-            4: [
-                'https://ryderjet.com/embed/5uio5usvgsjg', 
-                'https://example.com/view/season4/episode2.html', 
-                'https://example.com/view/season4/episode3.html',
-                // ... más URLs para otros capítulos de la temporada 4
-            ]
-        };
-        // URLs de descarga de los episodios por temporada
-        const urlsDescarga = {
-            1: [
-                'https://example.com/download/season1/episode1.mp4',
-                'https://example.com/download/season1/episode2.mp4',
-                'https://example.com/download/season1/episode3.mp4',
-                // ... más URLs para otros capítulos de la temporada 1
-            ],
-            2: [
-                'https://example.com/download/season2/episode1.mp4',
-                'https://example.com/download/season2/episode2.mp4',
-                'https://example.com/download/season2/episode3.mp4',
-                // ... más URLs para otros capítulos de la temporada 2
-            ],
-            3: [
-                'https://example.com/download/season3/episode1.mp4',
-                'https://example.com/download/season3/episode2.mp4',
-                'https://example.com/download/season3/episode3.mp4',
-                // ... más URLs para otros capítulos de la temporada 3
-            ],
-            4: [
-                'https://example.com/download/season4/episode1.mp4',
-                'https://example.com/download/season4/episode2.mp4',
-                'https://example.com/download/season4/episode3.mp4',
-                // ... más URLs para otros capítulos de la temporada 4
-            ]
-        };
+  <div class="overlay"></div>
+  <div class="container-fluid">
+    <div class="video-section">
+      <iframe id="video-iframe" src="https://gineshm.github.io/cinelatmobile.github.io/beta.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/1.mp4&titulo=➟One%20Piece%20%20:(T1%20-%20E1)&tiempo=125" allowfullscreen></iframe>
 
-        seasonItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const season = parseInt(item.dataset.season);
-                episodeList.innerHTML = ''; // Limpia la lista de capítulos
-                const episodiosTemporada = capítulos.find(cap => cap.temporada === season);
-                if (episodiosTemporada) {
-                    episodiosTemporada.episodios.forEach((episodio, index) => {
-                        const episodeItem = document.createElement('div');
-                        episodeItem.classList.add('episode-item');
-                        episodeItem.textContent = episodio;
-                        episodeItem.setAttribute('data-label', 'SUB'); // Añadir etiqueta de subtítulos
-                        episodeItem.addEventListener('click', () => {
-                            let urlVisualización = urlsVisualización[season][index];
-                            videoPlayer.src = urlVisualización;
-                            videoSection.scrollIntoView();
-                            episodeButton.textContent = episodio;
-                            downloadButton.onclick = () => {
-                                window.open(urlsDescarga[season][index], '_blank');
-                            };
-                            episodeItem.classList.add('selected');
-                        });
-                        episodeList.appendChild(episodeItem);
-                    });
-                    episodesSection.style.display = 'block'; // Muestra la sección de capítulos
-                    document.querySelectorAll('.season-item').forEach(el => el.classList.remove('selected'));
-                    item.classList.add('selected'); // Marca la temporada seleccionada
-                }
-            });
+    </div>
+
+    <div class="description">
+      <h1 id="series-title">One Piece</h1>
+      <div class="icons">
+        <i class="fas fa-expand icon" onclick="toggleFullScreen()" title="Pantalla Completa"></i>
+        <i class="fas fa-download icon" onclick="downloadSeries()" title="Descargar Serie"></i>
+      </div>
+    </div>
+
+    <div class="season-info d-flex justify-content-between align-items-center mb-2">
+      <select id="season-select" class="season-select" onchange="changeSeason(this.value)">
+        <option value="1">East Blue</option>
+        <option value="2">Entrando en la Grand Line</option>
+        <option value="3">Presentando a Chopper en la Isla de Invierno</option>
+        <option value="4">Llegada & Feroces Combates en Arabasta</option>
+        <option value="5">¡Sueños!, ¡La salida de la tripulación pirata de Zenny!, Más allá del arcoíris</option>
+        <option value="6">Isla del Cielo ~ Skypiea & la Campana Dorada</option>
+        <option value="7">¡Escape! La Fortaleza Marina & la Tripulación Pirata de Foxy</option>
+        <option value="8">Water Seven</option>
+        <option value="9">Enies Lobby</option>
+        <option value="10">Thriller Bark</option>
+        <option value="11">abaody Archipelago</option>
+        <option value="12">Isla de las Mujeres</option>
+        <option value="13">Impel Down</option>
+        <option value="14">Marineford</option>
+        <option value="15">Isla Gyojin</option>
+        <option value="16">Punk Hazard</option>
+        <option value="17">Dressrosa</option>
+        <option value="18">Zou</option>
+        <option value="19">Isla Whole Cake</option>
+        <option value="20">Pais de Wano</option>
+        <option value="21">Isla Egghead</option>
+        
+      </select>
+      <span>Actualizado hasta el 1</span>
+    </div>
+
+    <div class="episodes" id="episodes-container"></div>
+
+    <div class="synopsis">
+      <h2>Sinopsis</h2>
+      <p id="synopsis-text">
+        Taro Sakamoto, el mejor de los sicarios, se retiró en nombre del amor. Pero cuando el pasado lo persigue, debe luchar para proteger a su adorada familia.
+      </p>
+      <button id="toggle-button" class="btn btn-link text-light p-0">Ver más</button>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const seasons = {
+      1: [
+        'https://gineshm.github.io/cinelatmobile.github.io/beta.html?link=https://serverbankai.xyz/mantequilla/cerezo/monaschinas/juanpisa/latino/t1/1.mp4&titulo=➟One%20Piece%20%20:(T1%20-%20E1)&tiempo=125', 
+        
+        '',
+        
+        '',
+        
+        '',
+        
+        '',
+        
+        '',
+        
+                
+      ]
+    };
+
+    const episodesContainer = document.getElementById('episodes-container');
+    const videoIframe = document.getElementById('video-iframe');
+    const seasonSelect = document.getElementById('season-select');
+    const seriesTitle = document.getElementById('series-title').textContent.trim().replace(/\s+/g, '_');
+
+    function changeSeason(seasonNumber) {
+      episodesContainer.innerHTML = '';
+      const videoURLs = seasons[seasonNumber];
+
+      videoURLs.forEach((videoURL, index) => {
+        const button = document.createElement('button');
+        button.className = 'episode-button';
+        button.textContent = index + 1;
+
+        button.addEventListener('click', function () {
+          document.querySelectorAll('.episode-button').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          videoIframe.src = videoURL;
+          this.blur();
+          localStorage.setItem(`${seriesTitle}_ultimoEpisodio`, index);
+          localStorage.setItem(`${seriesTitle}_ultimaTemporada`, seasonNumber);
         });
 
-        function toggleFullscreen() {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
+        episodesContainer.appendChild(button);
+      });
+
+      const ultimoEpisodio = localStorage.getItem(`${seriesTitle}_ultimoEpisodio`);
+      const ultimaTemporada = localStorage.getItem(`${seriesTitle}_ultimaTemporada`);
+
+      if (ultimoEpisodio !== null && `${seasonNumber}` === ultimaTemporada) {
+        const btn = document.querySelectorAll('.episode-button')[ultimoEpisodio];
+        if (btn) btn.click();
+      }
+
+      localStorage.setItem(`${seriesTitle}_ultimaTemporadaSeleccionada`, seasonNumber);
+    }
+
+    const synopsisText = document.getElementById('synopsis-text');
+    const toggleButton = document.getElementById('toggle-button');
+    const fullText = synopsisText.textContent;
+    const truncatedText = fullText.substring(0, 100) + '...';
+    synopsisText.textContent = truncatedText;
+
+    toggleButton.addEventListener('click', function () {
+      if (toggleButton.textContent === 'Ver más') {
+        synopsisText.textContent = fullText;
+        toggleButton.textContent = 'Ver menos';
+      } else {
+        synopsisText.textContent = truncatedText;
+        toggleButton.textContent = 'Ver más';
+      }
+    });
+
+    function toggleFullScreen() {
+      if (videoIframe.requestFullscreen) {
+        videoIframe.requestFullscreen();
+      } else if (videoIframe.mozRequestFullScreen) {
+        videoIframe.mozRequestFullScreen();
+      } else if (videoIframe.webkitRequestFullscreen) {
+        videoIframe.webkitRequestFullscreen();
+      } else if (videoIframe.msRequestFullscreen) {
+        videoIframe.msRequestFullscreen();
+      }
+      Swal.fire({
+        icon: 'info',
+        title: 'Pantalla Completa',
+        text: 'El modo de pantalla completa ha sido activado.'
+      });
+    }
+
+    function downloadSeries() {
+      Swal.fire({
+        title: 'Descargar Episodio',
+        text: 'Selecciona un servidor de Descarga:',
+        input: 'select',
+        inputOptions: {
+          0: 'Opción 1',
+          1: 'transmitir TV',
+        },
+        inputPlaceholder: 'Selecciona servidor de Descarga',
+        showCancelButton: true,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              const downloadLinks = [
+                'LINK_DESCARGA_1',
+                'wvc-x-callback://open?url=https://wishonly.site/e/4gc3yropn53i',
+                'LINK_DESCARGA_3'
+              ];
+              window.location.href = downloadLinks[value];
+              resolve();
             } else {
-                videoSection.requestFullscreen();
+              resolve('Debes seleccionar un episodio');
             }
+          });
         }
-    </script>
+      });
+    }
+
+    const lastSeason = localStorage.getItem(`${seriesTitle}_ultimaTemporadaSeleccionada`) || 1;
+    seasonSelect.value = lastSeason;
+    changeSeason(lastSeason);
+  </script>
 </body>
 </html>
